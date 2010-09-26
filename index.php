@@ -4,7 +4,7 @@
  *
  */
 defined('APP_ENV') || define('APP_ENV', (getenv('APP_ENV') ? getenv('APP_ENV') : 'production'));
-defined('APP_ROOT_PATH') || define('APP_ROOT_PATH', realpath(dirname(__FILE__)));
+defined('APP_ROOT_PATH') || define('APP_ROOT_PATH', __DIR__);
 define('APP_LIB_PATH', APP_ROOT_PATH . '/lib');
 define('APP_ETC_PATH', APP_ROOT_PATH . '/etc');
 
