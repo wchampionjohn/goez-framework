@@ -20,10 +20,10 @@ set_include_path(join(PATH_SEPARATOR, $includePath));
  *
  */
 require_once 'GoEz/Loader.php';
-GoEz_Loader::autoload();
+GoEz\Loader::autoload();
 
 /**
  * 執行
  *
  */
-GoEz_Bootstrap::run(APP_ETC_PATH . '/config.ini', APP_ENV);
+GoEz\Bootstrap::run(APP_ETC_PATH . '/config.ini', APP_ENV);

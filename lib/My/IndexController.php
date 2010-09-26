@@ -1,9 +1,12 @@
 <?php
+
+namespace My;
+
 /**
  * 自訂程式
  *
  */
-class My_IndexController extends GoEz_Controller
+class IndexController extends \GoEz\Controller
 {
     /**
      * 預設動作
