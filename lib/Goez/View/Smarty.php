@@ -8,7 +8,7 @@
  * @version    $Id$
  */
 
-namespace GoEz\View;
+namespace Goez\View;
 
 /**
  * @see Smarty

@@ -6,7 +6,7 @@ namespace My;
  * 自訂程式
  *
  */
-class IndexController extends \GoEz\Controller
+class IndexController extends \Goez\Controller
 {
     /**
      * 預設動作
