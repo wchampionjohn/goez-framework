@@ -10,6 +10,8 @@
 
 namespace Goez\Router;
 
+use Goez\Router;
+
 /**
  * 網址重寫 Router 類別
  *
@@ -17,7 +19,7 @@ namespace Goez\Router;
  * @copyright  Copyright (c) 2008-2012 Wabow Information Inc. (http://www.wabow.com)
  * @license    New BSD License
  */
-class Rewrite extends \Goez\Router
+class Rewrite extends Router
 {
     /**
      * 解析網址

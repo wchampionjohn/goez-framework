@@ -19,7 +19,7 @@ namespace Goez;
  * @see        http://pwfisher.com/nucleus/index.php?itemid=45
  * @author     Patrick Fisher <patrick@pwfisher.com>
  */
-class Goez_Cli
+class Cli
 {
     /**
      * Arguments

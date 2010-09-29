@@ -10,6 +10,8 @@
 
 namespace Goez\Router;
 
+use Goez\Router;
+
 /**
  * CLI Router
  *
@@ -17,7 +19,7 @@ namespace Goez\Router;
  * @copyright  Copyright (c) 2008-2012 Wabow Information Inc. (http://www.wabow.com)
  * @license    New BSD License
  */
-class Cli extends \Goez\Router
+class Cli extends Router
 {
     /**
      * 解析參數
@@ -29,7 +31,7 @@ class Cli extends \Goez\Router
     protected function _parseUrl()
     {
         global $argv;
-        $parsedArgv = Cli::parseArgs($argv);
+        $parsedArgv = \Goez\Cli::parseArgs($argv);
 
         if (isset($parsedArgv['controller'])) {
             $this->_controller = strtolower($parsedArgv['controller']);
