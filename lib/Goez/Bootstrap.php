@@ -36,38 +36,20 @@ class Bootstrap
     protected $_config = array();
 
     /**
-     * Dispatcher
-     *
-     * 派送需求
-     *
-     * @var Goez\Dispatcher
-     */
-    protected $_dispatcher = null;
-
-    /**
      * Router
      *
      * 存放解析網址後的 Controller 與 Action
      *
-     * @var Goez\Router
+     * @var \Goez\Router
      */
     protected $_router = null;
-
-    /**
-     * Request
-     *
-     * 用來處理 $_POST 與 $_GET
-     *
-     * @var Goez\Request
-     */
-    protected $_request = null;
 
     /**
      * Response
      *
      * 用來處理輸出
      *
-     * @var Goez\Response
+     * @var \Goez\Response
      */
     protected $_response = null;
 
@@ -76,7 +58,7 @@ class Bootstrap
      *
      * 用來產生 Template 或是 JSON
      *
-     * @var Goez\View
+     * @var \Goez\View
      */
     protected $_view = null;
 
@@ -85,7 +67,7 @@ class Bootstrap
      * 
      * 資料庫連線物件
      *
-     * @var Goez\Db
+     * @var \Goez\Db
      */
     protected $_db = null;
 
@@ -107,7 +89,7 @@ class Bootstrap
         try {
             $bootstrap = new $bootstrapClass($config);
             $bootstrap->_dispatch();
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             self::displayException($e);
         }
 
@@ -374,7 +356,7 @@ class Bootstrap
      *
      * @param Exception $e
      */
-    public static function displayException(Exception $e)
+    public static function displayException(\Exception $e)
     {
         header('Content-Type: text/html; charset=utf-8');
         echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">',
