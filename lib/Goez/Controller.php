@@ -20,15 +20,11 @@ namespace Goez;
 abstract class Controller
 {
     /**
-     * Config
-     *
      * @var array
      */
     protected $_config = array();
 
     /**
-     * 指定 Config
-     *
      * @param array $config
      */
     public function setConfig($config)
@@ -37,8 +33,6 @@ abstract class Controller
     }
 
     /**
-     * 取得 Config
-     *
      * @return array
      */
     public function getConfig()
@@ -47,15 +41,11 @@ abstract class Controller
     }
 
     /**
-     * Request
-     *
      * @var \Goez\Request
      */
     protected $_request = null;
 
     /**
-     * 指定 Request
-     *
      * @param \Goez\Request $request
      */
     public function setRequest(Request $request)
@@ -64,8 +54,6 @@ abstract class Controller
     }
 
     /**
-     * 取得 Request
-     *
      * @return \Goez\Request
      */
     public function getRequest()
@@ -102,8 +90,6 @@ abstract class Controller
     protected $_view = null;
 
     /**
-     * 指定 View
-     *
      * @param \Goez\View $view
      */
     public function setView(View $view)
@@ -112,8 +98,6 @@ abstract class Controller
     }
 
     /**
-     * 取得 View
-     *
      * @return \Goez\View
      */
     public function getView()
