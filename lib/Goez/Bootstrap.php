@@ -81,6 +81,15 @@ class Bootstrap
     protected $_view = null;
 
     /**
+     * Db
+     * 
+     * 資料庫連線物件
+     *
+     * @var Goez\Db
+     */
+    protected $_db = null;
+
+    /**
      * 執行動作
      *
      * 派送 Action 至使用者定義的 Controller
@@ -90,23 +99,65 @@ class Bootstrap
      */
     public static final function run($configFile, $env = null)
     {
+        $config = self::_loadConfig($configFile, $env);
+        self::_setDebugMode($config);
+        $bootstrapClass = self::_getBootstrapClass($config);
+        set_error_handler(array($bootstrapClass, 'exceptionErrorHandler'));
+
         try {
-            $config = self::_loadConfig($configFile, $env);
-            self::$_debug = (isset($config['bootstrap']['debug'])) ? (bool) $config['bootstrap']['debug'] : false;
-            $bootstrapClass = 'Goez\Bootstrap';
-            if (isset($config['bootstrap']['class'])) {
-                $tempClass = trim($config['bootstrap']['class']);
-                $classExists = class_exists($tempClass, true);
-                $isSubClass = is_subclass_of($tempClass, $bootstrapClass);
-                if ($classExists && $isSubClass) {
-                    $bootstrapClass = $tempClass;
-                }
-            }
             $bootstrap = new $bootstrapClass($config);
             $bootstrap->_dispatch();
         } catch (Exception $e) {
             self::displayException($e);
         }
+
+        // 回復錯誤處理
+        restore_error_handler();
+    }
+
+    /**
+     * 取得 Bootstrap 類別
+     *
+     * @param array $config
+     * @return string
+     */
+    protected static function _getBootstrapClass($config)
+    {
+        $bootstrapClass = '\Goez\Bootstrap';
+        if (isset($config['bootstrap']['class'])) {
+            $tempClass = trim($config['bootstrap']['class']);
+            $classExists = class_exists($tempClass, true);
+            $isSubClass = is_subclass_of($tempClass, $bootstrapClass);
+            if ($classExists && $isSubClass) {
+                $bootstrapClass = $tempClass;
+            }
+        }
+        return $bootstrapClass;
+    }
+
+    /**
+     * 設定 Debug 模式
+     *
+     * @param array $config
+     */
+    protected static function _setDebugMode($config)
+    {
+        self::$_debug = (isset($config['bootstrap']['debug'])) 
+                      ? (bool) $config['bootstrap']['debug']
+                      : false;
+    }
+
+    /**
+     * 錯誤處理函式
+     *
+     * @param int $errNo
+     * @param string $errMsg
+     * @param string $errFile
+     * @param string $errLine
+     */
+    public static function exceptionErrorHandler($errNo, $errMsg, $errFile, $errLine )
+    {
+        throw new \ErrorException($errMsg, 0, $errNo, $errFile, $errLine);
     }
 
     /**
@@ -150,41 +201,20 @@ class Bootstrap
     {
         $this->_config = $config;
         $this->_initRequest();
-        $this->_initResponse();
-        $this->_initDispatcher();
         $this->_initRouter();
         $this->_initView();
+        $this->_initDb();
     }
 
     /**
      * 初始化 Request
      *
-     * 預設為 Goez\Request
+     * 預設為 \Goez\Request
      */
     protected function _initRequest()
     {
-        $requestName = $this->_getClassInConfig('request', 'Goez\Request');
+        $requestName = $this->_getClassInConfig('request', '\Goez\Request');
         $this->_request = new $requestName();
-    }
-
-    /**
-     * 初始化 Response
-     *
-     * 預設為 Goez\Response
-     */
-    protected function _initResponse()
-    {
-        $responseName = $this->_getClassInConfig('response', 'Goez\Response');
-        $this->_response = new $responseName();
-    }
-
-    /**
-     * 初始化 Dispatcher
-     */
-    protected function _initDispatcher()
-    {
-        $dispatcherName = $this->_getClassInConfig('dispatcher', 'Goez\Dispatcher');
-        $this->_dispatcher = new $dispatcherName();
     }
 
     /**
@@ -208,7 +238,7 @@ class Bootstrap
      * http://xxx/baseurl/index/action
      * </code>
      *
-     * 如果採用 Goez\Router 來解析網址的話，格式為：
+     * 如果採用 \Goez\Router 來解析網址的話，格式為：
      *
      * <code>
      * http://xxx/baseurl/?controller=xxx&action=yyy
@@ -217,9 +247,9 @@ class Bootstrap
     protected function _initRouter()
     {
         if ('cli' === strtolower(PHP_SAPI)) {
-            $routerName = 'Goez\Router\Cli';
+            $routerName = '\Goez\Router\Cli';
         } else {
-            $routerName = $this->_getClassInConfig('router', 'Goez\Router\Rewrite');
+            $routerName = $this->_getClassInConfig('router', '\Goez\Router\Rewrite');
         }
 
         $this->_router = new $routerName($this->_request);
@@ -235,6 +265,17 @@ class Bootstrap
     {
         $this->_view = new View($this->_config['view']);
         $this->_view->setFrontendVars('baseUrl', $this->_request->getBaseUrl());
+    }
+
+    /**
+     * 初始化資料庫
+     *
+     */
+    protected function _initDb()
+    {
+        if (isset($this->_config['db'])) {
+            $this->_db = Db::factory($this->_config['db']);
+        }
     }
 
     /**
@@ -260,15 +301,11 @@ class Bootstrap
      */
     protected function _dispatch()
     {
-        try {
-            $this->_dispatcher->dispatch($this->_request, $this->_response);
-        } catch (Exception $e) {
-            $this->_response->setException($e);
-        }
         $this->_userController = $this->_getUserController();
         $this->_userController->setConfig($this->_config);
         $this->_userController->setRequest($this->_request);
         $this->_userController->setView($this->_view);
+        $this->_userController->setDb($this->_db);
         $this->_userController->init();
         $this->_userController->beforeDispatch();
         $this->_userController->{$this->_getUserAction()}();
@@ -278,7 +315,7 @@ class Bootstrap
     /**
      * 取得使用者定義的 Controller
      *
-     * @return Goez\Controller
+     * @return \Goez\Controller
      * @throws Excetion
      */
     protected function _getUserController()
@@ -344,9 +381,10 @@ class Bootstrap
         '<html xmlns="http://www.w3.org/1999/xhtml">',
         '<head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />',
         '<title>程式發生錯誤</title></head><body>',
-        '<h1>程式發生錯誤</h1>';
+        '<h1 style="color:#f33;">程式發生錯誤</h1>';
         if (self::$_debug) {
-            echo '<p>', $e->getMessage(), '</p>';
+            echo '<p><strong>狀況： ', $e->getMessage(), '</strong></p>';
+            echo '<p><strong>追蹤資訊：</strong></p>';
             echo self::displayTrace($e->getTrace());
         } else {
             echo '<p>您提供的網址或是您的操作造成了系統無法正確回應。</p>';
@@ -362,13 +400,14 @@ class Bootstrap
      */
     protected static function displayTrace($traceList)
     {
-        $result = '<hr />';
+        $result = '';
         foreach ($traceList as $trace) {
+            $result .= '<pre style="border:1px solid #eee; background: #ffc; margin-left: 10px; padding: 5px; font-size: 12px;">';
             foreach ($trace as $col => $value) {
                 $result .= '<strong>' . $col . '</strong>: ' . htmlspecialchars(print_r($value, true)) . "\n";
             }
-            $result .= '<hr />';
+            $result .= '</pre>';
         }
-        return '<pre>' . $result . '</pre>';
+        return $result;
     }
 }

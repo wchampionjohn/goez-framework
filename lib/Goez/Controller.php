@@ -49,14 +49,14 @@ abstract class Controller
     /**
      * Request
      *
-     * @var Goez_Request
+     * @var \Goez\Request
      */
     protected $_request = null;
 
     /**
      * 指定 Request
      *
-     * @param Goez_Request $request
+     * @param \Goez\Request $request
      */
     public function setRequest(Request $request)
     {
@@ -66,11 +66,32 @@ abstract class Controller
     /**
      * 取得 Request
      *
-     * @return Goez_Request
+     * @return \Goez\Request
      */
     public function getRequest()
     {
         return $this->_request;
+    }
+
+    /**
+     * @var \Goez\Db
+     */
+    protected $_db = null;
+
+    /**
+     * @param \Goez\Db $db
+     */
+    public function setDb(Db $db = null)
+    {
+        $this->_db = $db;
+    }
+
+    /**
+     * @return \Goez\Db
+     */
+    public function getDb()
+    {
+        return $this->_db;
     }
 
     /**
@@ -83,7 +104,7 @@ abstract class Controller
     /**
      * 指定 View
      *
-     * @param Goez_View $view
+     * @param \Goez\View $view
      */
     public function setView(View $view)
     {
@@ -93,7 +114,7 @@ abstract class Controller
     /**
      * 取得 View
      *
-     * @return Goez_View
+     * @return \Goez\View
      */
     public function getView()
     {
