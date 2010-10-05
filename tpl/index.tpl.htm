@@ -3,13 +3,13 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>Goez Framework!!!</title>
-<link rel="stylesheet" type="text/css" href="<% $frontendVars.baseUrl %>/pub/css/style.css" media="all" />
+<link rel="stylesheet" type="text/css" href="<% $fvars.baseUrl %>/pub/css/style.css" media="all" />
 <script type="text/javascript">
-var $frontendVars = <% $frontendVars|@json_encode %>;
+var $fvars = <% $fvars|@json_encode %>;
 </script>
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
-<script type="text/javascript" src="<% $frontendVars.baseUrl %>/pub/lib/jquery/form.js"></script>
-<script type="text/javascript" src="<% $frontendVars.baseUrl %>/pub/js/default.js"></script>
+<script type="text/javascript" src="<% $fvars.baseUrl %>/pub/lib/jquery/form.js"></script>
+<script type="text/javascript" src="<% $fvars.baseUrl %>/pub/js/default.js"></script>
 </head>
 
 <body>
@@ -44,6 +44,6 @@ var $frontendVars = <% $frontendVars|@json_encode %>;
 <p>Powered by <a href="http://code.google.com/p/goezframework/" target="_blank">Goez Framework</a></p>
 </div>
 </div>
-<!--[if lte IE 6]><script src="<% $frontendVars.baseUrl %>/pub/lib/ie6/warning.js?v=<% ''|@time %>"></script><script>window.onload=function(){e($frontendVars.baseUrl + '/pub/lib/ie6/')}</script><![endif]-->
+<!--[if lte IE 6]><script src="<% $fvars.baseUrl %>/pub/lib/ie6/warning.js?v=<% ''|@time %>"></script><script>window.onload=function(){e($fvars.baseUrl + '/pub/lib/ie6/')}</script><![endif]-->
 </body>
 </html>

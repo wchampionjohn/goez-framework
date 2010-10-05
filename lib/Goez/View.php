@@ -70,7 +70,7 @@ class View
      *
      * @var array
      */
-    protected $_frontendVars = array();
+    protected $_fvars = array();
 
     /**
      * 設定前端樣版變數
@@ -82,7 +82,7 @@ class View
      */
     public function setFrontendVars($name, $value = null)
     {
-        $this->_setVars($this->_frontendVars, $name, $value);
+        $this->_setVars($this->_fvars, $name, $value);
     }
 
     /**
@@ -144,7 +144,7 @@ class View
     /**
      * 取得 Render 結果
      *
-     * 先將一般的樣版變數以及 frontendVars 指定的樣版變數 assign 給 Goez_View_Engine
+     * 先將一般的樣版變數以及 fvars 指定的樣版變數 assign 給 Goez_View_Engine
      * 然後回傳 Goez_View_Engine::fetch() 後的結果
      *
      * @param string $file
@@ -154,7 +154,7 @@ class View
     {
         $engine = $this->getViewEngine();
         $engine->assign($this->_vars);
-        $engine->assign('frontendVars', $this->_frontendVars);
+        $engine->assign('fvars', $this->_fvars);
         return $engine->fetch($file);
     }
 
@@ -174,7 +174,7 @@ class View
     /**
      * 產生 JSON
      *
-     * 注意：這個方法不會把 frontendVars 的內容包含進來
+     * 注意：這個方法不會把 fvars 的內容包含進來
      *
      * @return string
      */
