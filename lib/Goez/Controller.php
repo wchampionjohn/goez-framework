@@ -35,9 +35,14 @@ abstract class Controller
     /**
      * @return array
      */
-    public function getConfig()
+    public function getConfig($name = null)
     {
-        return $this->_config;
+        if (null === $name) {
+            return $this->_config;
+        } elseif (isset($this->_config[$name])) {
+            return $this->_config[$name];
+        }
+        return array();
     }
 
     /**
@@ -62,24 +67,24 @@ abstract class Controller
     }
 
     /**
-     * @var \Goez\Db
+     * @var \Goez\_Response
      */
-    protected $_db = null;
+    protected $_response = null;
 
     /**
-     * @param \Goez\Db $db
+     * @param \Goez\Response $response
      */
-    public function setDb(Db $db = null)
+    public function setResponse(\Goez\Response $response)
     {
-        $this->_db = $db;
+        $this->_response = $response;
     }
 
     /**
-     * @return \Goez\Db
+     * @return \Goez\Response
      */
-    public function getDb()
+    public function getResponse()
     {
-        return $this->_db;
+        return $this->_response;
     }
 
     /**
@@ -143,8 +148,7 @@ abstract class Controller
             if (!preg_match('/^[a-z]+?:\/\//i', $url)) {
                 $url = $this->_request->getBaseUrl() . '/' . ltrim($url, '/');
             }
-            header('Location: ' . $url);
-            exit;
+            $this->_response->setHeader('Location', $url);
         }
     }
 
@@ -156,14 +160,16 @@ abstract class Controller
      */
     public function setDownloadHeader($fileName = 'unnamed', $fileSize = null)
     {
-        header('Pragma: public');
-        header('Expires: 0');
-        header('Last-Modified: ' . gmdate('D, d M Y H:i ') . ' GMT');
-        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
-        header('Cache-Control: private', false);
-        header('Content-Type: application/octet-stream');
-        if ($fileSize) { header('Content-Length: ' . $fileSize); }
-        header('Content-Disposition: attachment; filename="' . $fileName . '";');
-        header('Content-Transfer-Encoding: binary');
+        $this->_response->setHeader('Pragma', 'public')
+                        ->setHeader('Expires', 0)
+                        ->setHeader('Last-Modified', gmdate('D, d M Y H:i ') . ' GMT')
+                        ->setHeader('Cache-Control', 'must-revalidate, post-check=0, pre-check=0')
+                        ->setHeader('Cache-Control', 'private', false)
+                        ->setHeader('Content-Type', 'application/octet-stream')
+                        ->setHeader('Content-Disposition', 'attachment; filename="' . $fileName . '";')
+                        ->setHeader('Content-Transfer-Encoding', 'binary');
+        if ($fileSize) {
+            $this->_response->setHeader('Content-Length', $fileSize);
+        }
     }
 }

@@ -45,6 +45,15 @@ class Bootstrap
     protected $_router = null;
 
     /**
+     * Request
+     *
+     * 用來處理 $_POST 與 $_GET
+     *
+     * @var \Goez\Request
+     */
+    protected $_request = null;
+
+    /**
      * Response
      *
      * 用來處理輸出
@@ -63,15 +72,6 @@ class Bootstrap
     protected $_view = null;
 
     /**
-     * Db
-     * 
-     * 資料庫連線物件
-     *
-     * @var \Goez\Db
-     */
-    protected $_db = null;
-
-    /**
      * 執行動作
      *
      * 派送 Action 至使用者定義的 Controller
@@ -86,12 +86,8 @@ class Bootstrap
         $bootstrapClass = self::_getBootstrapClass($config);
         set_error_handler(array($bootstrapClass, 'exceptionErrorHandler'));
 
-        try {
-            $bootstrap = new $bootstrapClass($config);
-            $bootstrap->_dispatch();
-        } catch (\Exception $e) {
-            self::displayException($e);
-        }
+        $bootstrap = new $bootstrapClass($config);
+        $response = $bootstrap->_dispatch();
 
         // 回復錯誤處理
         restore_error_handler();
@@ -183,6 +179,7 @@ class Bootstrap
     {
         $this->_config = $config;
         $this->_initRequest();
+        $this->_initResponse();
         $this->_initRouter();
         $this->_initView();
         $this->_initDb();
@@ -197,6 +194,17 @@ class Bootstrap
     {
         $requestName = $this->_getClassInConfig('request', '\Goez\Request');
         $this->_request = new $requestName();
+    }
+
+    /**
+     * 初始化 Response
+     *
+     * 預設為 Goez_Response
+     */
+    protected function _initResponse()
+    {
+        $responseName = $this->_getClassInConfig('response', '\Goez\Response');
+        $this->_response = new $responseName();
     }
 
     /**
@@ -240,7 +248,7 @@ class Bootstrap
     /**
      * 初始化 View
      *
-     * Goez\View 採用 Smarty 2.6 當做 Render engine ，
+     * \Goez\View 採用 Smarty 3 當做 Render engine ，
      * 在這裡初始化時，會預先把 baseUrl 放在 $fvars 這個樣版陣列變數裡
      */
     protected function _initView()
@@ -257,6 +265,7 @@ class Bootstrap
     {
         if (isset($this->_config['db'])) {
             $this->_db = Db::factory($this->_config['db']);
+            Db\Common::setDefaultAdapter($db);
         }
     }
 
@@ -283,15 +292,20 @@ class Bootstrap
      */
     protected function _dispatch()
     {
-        $this->_userController = $this->_getUserController();
-        $this->_userController->setConfig($this->_config);
-        $this->_userController->setRequest($this->_request);
-        $this->_userController->setView($this->_view);
-        $this->_userController->setDb($this->_db);
-        $this->_userController->init();
-        $this->_userController->beforeDispatch();
-        $this->_userController->{$this->_getUserAction()}();
-        $this->_userController->afterDispatch();
+        try {
+            $this->_userController = $this->_getUserController();
+            $this->_userController->setConfig($this->_config);
+            $this->_userController->setRequest($this->_request);
+            $this->_userController->setResponse($this->_response);
+            $this->_userController->setView($this->_view);
+            $this->_userController->init();
+            $this->_userController->beforeDispatch();
+            $this->_userController->{$this->_getUserAction()}();
+            $this->_userController->afterDispatch();
+        } catch (Exception $e) {
+            $this->_response->setException($e);
+        }
+        $this->_response->sendResponse();
     }
 
     /**
