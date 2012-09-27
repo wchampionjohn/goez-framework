@@ -52,7 +52,7 @@ class Db
      * 用法：
      *
      * <code>
-     * $db = Goez_Db::factory('mysql', array(
+     * $db = Goez\Db::factory('mysql', array(
      *     'username' => 'webuser',
      *     'password' => 'xxxxxxxx',
      *     'dbname' => 'test',
@@ -61,9 +61,9 @@ class Db
      * </code>
      *
      * 或是：
-     * 
+     *
      * <code>
-     * $db = Goez_Db::factory(array(
+     * $db = Goez\Db::factory(array(
      *     'driver' => 'mysql',
      *     'params' => array(
      *         'username' => 'webuser',
@@ -75,7 +75,7 @@ class Db
      *
      * @param mixed $pdoType
      * @param array $config
-     * @return Goez_Db
+     * @return \Goez\Db
      */
     public static function factory($pdoType, $config = array())
     {
@@ -524,7 +524,7 @@ class Db
     }
 
     /**
-     * @return Goez_Db
+     * @return \Goez\Db
      */
     public function beginTransaction()
     {
@@ -534,7 +534,7 @@ class Db
     }
 
     /**
-     * @return Goez_Db
+     * @return \Goez\Db
      */
     public function commit()
     {
@@ -544,7 +544,7 @@ class Db
     }
 
     /**
-     * @return Goez_Db
+     * @return \Goez\Db
      */
     public function rollBack()
     {
