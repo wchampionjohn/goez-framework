@@ -254,6 +254,22 @@ class Db
     }
 
     /**
+     *
+     * @param string|\Goez\Db\Select $sql
+     * @param array $bind
+     * @return array
+     */
+    public function fetchPair($sql, $bind = array())
+    {
+        $result = $this->fetchAll($sql, $bind);
+        $pairs = array();
+        foreach ($result as $record) {
+            $pairs[array_shift($record)] = array_shift($record);
+        }
+        return $pairs;
+    }
+
+    /**
      * 取得一筆資料
      *
      * @param string|\Goez\Db\Select $sql
