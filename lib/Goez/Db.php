@@ -489,8 +489,12 @@ class Db
         $i = 0;
         foreach ($bind as $col => $val) {
             unset($bind[$col]);
-            $bind[':' . $col . $i] = $val;
-            $val = ':' . $col . $i;
+            if (is_array($val)) {
+                $val = array_shift($val);
+            } else {
+                $bind[':' . $col . $i] = $val;
+                $val = ':' . $col . $i;
+            }
             $i ++;
             $set[] = $this->quoteIdentifier($col, true) . ' = ' . $val;
         }
