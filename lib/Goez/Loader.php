@@ -39,7 +39,7 @@ class Loader
     /**
      * 載入類別
      *
-     * 將類別名稱 Xx_Yyy_Zzz 轉為 Xx/Yyy/Zzz.php 後載入
+     * 將類別名稱 Xx_Yyy_Zzz 或 Xx\Yyy\Zzz 轉為 Xx/Yyy/Zzz.php 後載入
      *
      * @param string $className
      * @throws Excetion
@@ -50,7 +50,7 @@ class Loader
             return true;
         }
 
-        $fileName = str_replace('\\', '/', $className) . '.php';
+        $fileName = str_replace(array('\\', '_'), '/', $className) . '.php';
 
         $loader = new self();
 

@@ -10,31 +10,9 @@ set_include_path(implode(PATH_SEPARATOR, array(
     get_include_path(),
 )));
 
-function autoload1($className)
-{
-    $className = str_replace('_', '/', $className);
-    @include_once "$className.php";
-    if (!class_exists($className, false) && !interface_exists($className, false)) {
-        return false;
-    }
-    return true;
-}
-
-spl_autoload_register('autoload1');
-
-function autoload2($className)
-{
-    $className = str_replace('\\', '/', $className);
-    @include_once "$className.php";
-    if (!class_exists($className, false) && !interface_exists($className, false)) {
-        return false;
-    }
-    return true;
-}
-
-spl_autoload_register('autoload2');
-
-function transDS($path)
-{
-    return str_replace('\\', '/', $path);
-}
+/**
+ * 自動載入類別
+ *
+ */
+require_once 'Goez/Loader.php';
+Goez\Loader::autoload();
