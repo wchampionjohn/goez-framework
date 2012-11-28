@@ -254,6 +254,7 @@ class Db
     }
 
     /**
+     * 取得指定欄位的 [ 鍵 => 值 ] 配對集合
      *
      * @param string|\Goez\Db\Select $sql
      * @param array $bind
@@ -267,6 +268,22 @@ class Db
             $pairs[array_shift($record)] = array_shift($record);
         }
         return $pairs;
+    }
+
+    /**
+     * 取得單一欄位的集合
+     *
+     * @param type $sql
+     * @return type
+     */
+    public function fetchCol($sql, $bind = array())
+    {
+        $result = $this->fetchAll($sql, $bind);
+        $cols = array();
+        foreach ($result as $record) {
+            $cols[] = array_shift($record);
+        }
+        return $cols;
     }
 
     /**
